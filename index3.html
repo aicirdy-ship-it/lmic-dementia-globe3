@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>LMIC Dementia Studies Globe</title>
+
+  <script src="https://unpkg.com/globe.gl"></script>
+
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background-color: #f5f5f0;
+      font-family: Arial, sans-serif;
+    }
+
+    #globeViz {
+      width: 100vw;
+      height: 100vh;
+    }
+
+    #legend {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      background: rgba(255,255,255,0.9);
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 14px;
+      line-height: 1.6;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .legend-color {
+      width: 16px;
+      height: 16px;
+      border-radius: 4px;
+      margin-right: 10px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div id="globeViz"></div>
+
+<div id="legend">
+  <div class="legend-item">
+    <div class="legend-color" style="background:#d94b4b;"></div>
+    Countries with studies
+  </div>
+
+  <div class="legend-item">
+    <div class="legend-color" style="background:#d3d3d3;"></div>
+    High-income countries
+  </div>
+</div>
+
+<script>
+
+const world = Globe()
+(document.getElementById('globeViz'))
+
+.globeImageUrl('//unpkg.com/three-globe/example/img/earth-day.jpg')
+
+.backgroundColor('#f5f5f0');
+
+world.controls().autoRotate = true;
+world.controls().autoRotateSpeed = 0.6;
+
+const highlighted = {
+  "China": 34,
+  "India": 14,
+  "Brazil": 10,
+  "Iran": 4,
+  "Indonesia": 3,
+  "Thailand": 2,
+  "Turkey": 2,
+  "Argentina": 1,
+  "Colombia": 1,
+  "Ecuador": 1,
+  "Mongolia": 1,
+};
+
+const highIncome = [
+
+  "United States of America",
+  "Canada",
+  "Australia",
+  "New Zealand",
+  "Japan",
+  "South Korea",
+  "Singapore",
+  "Israel",
+
+  "United Kingdom",
+  "Ireland",
+  "France",
+  "Germany",
+  "Italy",
+  "Spain",
+  "Portugal",
+  "Netherlands",
+  "Belgium",
+  "Luxembourg",
+  "Switzerland",
+  "Austria",
+  "Norway",
+  "Sweden",
+  "Finland",
+  "Denmark",
+  "Iceland",
+
+  "Poland",
+  "Czech Republic",
+  "Slovakia",
+  "Slovenia",
+  "Estonia",
+  "Latvia",
+  "Lithuania",
+  "Greece",
+  "Croatia",
+  "Hungary",
+
+  "Saudi Arabia",
+  "United Arab Emirates",
+  "Qatar",
+  "Kuwait",
+  "Bahrain",
+  "Oman",
+
+  "Chile",
+  "Uruguay",
+
+  "Taiwan"
+];
+
+fetch('https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson')
+
+.then(res => res.json())
+
+.then(countries => {
+
+  countries.features.forEach(f => {
+    const name = f.properties.name;
+    f.properties.value = highlighted[name] || 0;
+  });
+
+  world
+    .polygonsData(countries.features)
+
+    .polygonCapColor(feat => {
+
+      const name = feat.properties.name;
+
+      if (highlighted[name]) {
+
+        const intensity = highlighted[name] / 34;
+
+        return `rgba(217,75,75,${0.35 + intensity * 0.65})`;
+      }
+
+      if (highIncome.includes(name)) {
+        return 'rgba(211,211,211,0.85)';
+      }
+
+      return 'rgba(235,235,235,0.25)';
+    })
+
+    .polygonSideColor(() => 'rgba(0,0,0,0.03)')
+
+    .polygonStrokeColor(() => 'rgba(80,80,80,0.18)')
+
+    .polygonLabel(feat => {
+
+      const studies = feat.properties.value;
+
+      if (studies > 0) {
+
+        return `
+          <div style="
+            background:white;
+            padding:8px 10px;
+            border-radius:8px;
+            font-size:14px;
+          ">
+            <b>${feat.properties.name}</b><br/>
+            Studies: ${studies}
+          </div>
+        `;
+      }
+
+      return `
+        <div style="
+          background:white;
+          padding:6px 8px;
+          border-radius:8px;
+          font-size:13px;
+        ">
+          ${feat.properties.name}
+        </div>
+      `;
+    });
+
+});
+
+</script>
+</body>
+</html>
