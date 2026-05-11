@@ -90,7 +90,7 @@ const highlighted = {
 
 const highIncome = [
 
-  "United States of America",
+  "USA",
   "Canada",
   "Australia",
   "New Zealand",
@@ -99,7 +99,7 @@ const highIncome = [
   "Singapore",
   "Israel",
 
-  "United Kingdom",
+  "England",
   "Ireland",
   "France",
   "Germany",
@@ -176,38 +176,43 @@ fetch('https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/wor
     .polygonSideColor(() => 'rgba(0,0,0,0.03)')
 
     .polygonStrokeColor(() => 'rgba(80,80,80,0.18)')
-
+    
     .polygonLabel(feat => {
 
-      const studies = feat.properties.value;
+  const studies = feat.properties.value;
 
-      if (studies > 0) {
+  if (studies > 0) {
 
-        return `
-          <div style="
-            background:white;
-            padding:8px 10px;
-            border-radius:8px;
-            font-size:14px;
-          ">
-            <b>${feat.properties.name}</b><br/>
-            Studies: ${studies}
-          </div>
-        `;
-      }
+    return `
+      <div style="
+        background: rgba(35,35,35,0.92);
+        color: white;
+        padding: 10px 12px;
+        border-radius: 10px;
+        font-size: 14px;
+        font-family: Arial;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.25);
+      ">
+        <b>${feat.properties.name}</b><br/>
+        Studies: ${studies}
+      </div>
+    `;
+  }
 
-      return `
-        <div style="
-          background:white;
-          padding:6px 8px;
-          border-radius:8px;
-          font-size:13px;
-        ">
-          ${feat.properties.name}
-        </div>
-      `;
-    });
-
+  return `
+    <div style="
+      background: rgba(35,35,35,0.88);
+      color: white;
+      padding: 8px 10px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-family: Arial;
+    ">
+      ${feat.properties.name}
+    </div>
+  `;
+})
+    
 });
 
 </script>
